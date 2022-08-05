@@ -1,0 +1,22 @@
+version: "3.6"
+
+x-xdebug: &xdebug
+  XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+  XDEBUG_CONFIG: "${XDEBUG_CONFIG:-''}"
+  PHP_IDE_CONFIG: "serverName=php-docker.local"
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      <<: *xdebug
+      OTEL_SERVICE_NAME: psr22-demo
+    volumes:
+      - ./src:/srv/app
+
+  zipkin:
+    image: openzipkin/zipkin-slim
+    ports:
+      - "9411:9411"
