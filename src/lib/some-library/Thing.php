@@ -14,8 +14,11 @@ class Thing implements TracerAwareInterface
         $span = $this->tracer->startSpan('something');
         $span->setAttribute('foo', 'bar');
         $span->startAndActivate();
-        $this->doSomethingElse();
-        $span->finish();
+        try {
+            $this->doSomethingElse();
+        } finally {
+            $span->finish();
+        }
     }
 
     private function doSomethingElse(): void
