@@ -38,6 +38,14 @@ class Span implements \Psr\Tracing\SpanInterface
     }
 
     /**
+     * @todo use `start` + `startAndActivate` ?
+     */
+    public function activate(): SpanInterface
+    {
+        return $this->startAndActivate();
+    }
+
+    /**
      * @inheritDoc
      */
     public function startAndActivate(): SpanInterface
