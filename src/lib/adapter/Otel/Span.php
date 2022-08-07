@@ -10,13 +10,12 @@ use Psr\Tracing\SpanInterface;
 
 class Span implements \Psr\Tracing\SpanInterface
 {
-    private ?OtelSpanInterface $otelSpan = null;
-    private SpanBuilderInterface $spanBuilder;
+    private OtelSpanInterface $otelSpan;
     private ?ScopeInterface $scope = null;
 
-    function __construct(SpanBuilderInterface $spanBuilder)
+    function __construct(OtelSpanInterface $span)
     {
-        $this->spanBuilder = $spanBuilder;
+        $this->otelSpan = $span;
     }
 
     /**
@@ -24,7 +23,7 @@ class Span implements \Psr\Tracing\SpanInterface
      */
     public function setAttribute(string $key, mixed $value): SpanInterface
     {
-        $this->spanBuilder->setAttribute($key, $value);
+        $this->otelSpan->setAttribute($key, $value);
         return $this;
     }
 
@@ -33,31 +32,16 @@ class Span implements \Psr\Tracing\SpanInterface
      */
     public function setAttributes(iterable $attributes): SpanInterface
     {
-        $this->spanBuilder->setAttributes($attributes);
+        $this->otelSpan->setAttributes($attributes);
         return $this;
-    }
-
-    /**
-     * @todo use `start` + `startAndActivate` ?
-     */
-    public function activate(): SpanInterface
-    {
-        return $this->startAndActivate();
     }
 
     /**
      * @inheritDoc
      */
-    public function startAndActivate(): SpanInterface
+    public function activate(): SpanInterface
     {
-        $this->otelSpan = $this->spanBuilder->startSpan();
         $this->scope = $this->otelSpan->activate();
-        return $this;
-    }
-
-    public function start(): SpanInterface
-    {
-        $this->otelSpan = $this->spanBuilder->startSpan();
         return $this;
     }
 
@@ -66,13 +50,13 @@ class Span implements \Psr\Tracing\SpanInterface
      */
     public function finish(): void
     {
-        $this->otelSpan?->end();
+        $this->otelSpan->end();
         $this->scope?->detach();
     }
 
     /**
      * @inheritDoc
-     * @todo should return an array of headers
+     * @todo should return an array of headers, and have a more generic name...
      */
     public function toTraceparent(): ?string
     {

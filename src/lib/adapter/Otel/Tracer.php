@@ -26,6 +26,6 @@ class Tracer implements TracerInterface
      */
     public function startSpan(string $spanName): SpanInterface
     {
-        return new Span($this->tracer->spanBuilder($spanName));
+        return new Span($this->tracer->spanBuilder($spanName)->startSpan());
     }
 }

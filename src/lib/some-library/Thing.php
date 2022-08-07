@@ -13,7 +13,7 @@ class Thing implements TracerAwareInterface
     {
         $span = $this->tracer->startSpan('something');
         $span->setAttribute('foo', 'bar');
-        $span->startAndActivate();
+        $span->activate();
         try {
             $this->doSomethingElse();
         } finally {
@@ -24,7 +24,7 @@ class Thing implements TracerAwareInterface
     private function doSomethingElse(): void
     {
         $span = $this->tracer->startSpan('something.else');
-        $span->start();
+        //do some work
         $span->finish();
     }
 }
