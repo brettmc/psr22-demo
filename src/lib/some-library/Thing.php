@@ -11,10 +11,13 @@ class Thing implements TracerAwareInterface
 
     public function doSomething(): void
     {
-        $span = $this->tracer->startSpan('something');
-        $span->setAttribute('foo', 'bar');
-        $span->activate();
+        $span = $this->tracer
+            ->createSpan('something')
+            ->setAttribute('foo', 'bar')
+            ->start()
+            ->activate();
         try {
+            echo 'Trace Context Headers: '. json_encode($span->toTraceContextHeaders()) . PHP_EOL;
             $this->doSomethingElse();
         } finally {
             $span->finish();
@@ -23,7 +26,7 @@ class Thing implements TracerAwareInterface
 
     private function doSomethingElse(): void
     {
-        $span = $this->tracer->startSpan('something.else');
+        $span = $this->tracer->createSpan('something.else')->start();
         //do some work
         $span->finish();
     }

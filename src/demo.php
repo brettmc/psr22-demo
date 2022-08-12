@@ -21,9 +21,17 @@ $provider = new TracerProvider(
         $exporter
     )
 );
-
-$tracer = new \Psr22Adapter\Otel\Tracer($provider);
-
-$thing = new \InstrumentedLibrary\Thing();
-$thing->setTracer($tracer);
-$thing->doSomething();
+$otelTracer = $provider->getTracer('foo');
+$psrTracer = new \Psr22Adapter\Otel\Tracer($provider);
+echo 'Initial Trace Id: ' . $psrTracer->getCurrentTraceId() . PHP_EOL;
+$span = $otelTracer->spanBuilder('root')->startSpan();
+$scope = $span->activate();
+try {
+    echo 'Current Trace Id: ' . $psrTracer->getCurrentTraceId() . PHP_EOL;
+    $thing = new \InstrumentedLibrary\Thing();
+    $thing->setTracer($psrTracer);
+    $thing->doSomething();
+} finally {
+    $span->end();
+    $scope->detach();
+}
