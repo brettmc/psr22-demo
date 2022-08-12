@@ -54,6 +54,7 @@ class Span implements SpanInterface
      */
     public function activate(): SpanInterface
     {
+        !isset($this->span) && $this->start();
         $this->scope = $this->span->activate();
         return $this;
     }

@@ -14,8 +14,7 @@ class Thing implements TracerAwareInterface
         $span = $this->tracer
             ->createSpan('something')
             ->setAttribute('foo', 'bar')
-            ->start()
-            ->activate();
+            ->activate(); //NB activate should start
         try {
             echo 'Trace Context Headers: '. json_encode($span->toTraceContextHeaders()) . PHP_EOL;
             $this->doSomethingElse();
