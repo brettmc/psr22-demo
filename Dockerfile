@@ -1,4 +1,4 @@
-FROM php:8.1-alpine as base
+FROM php:8.3-alpine as base
 
 WORKDIR /srv/app
 RUN addgroup -g "1000" -S php \

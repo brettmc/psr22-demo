@@ -1,0 +1,38 @@
+{
+    "name": "brettmc/psr-22-demo",
+    "type": "project",
+    "repositories": [
+        {
+          "type": "git",
+          "url": "https://github.com/AAllport/psr-tracing"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "open-telemetry/sdk": "^1",
+        "psr/tracing": "dev-main",
+        "guzzlehttp/guzzle": "*",
+        "php-http/guzzle7-adapter": "*",
+        "nyholm/psr7": "^1.5"
+    },
+    "require-dev": {
+        "open-telemetry/exporter-zipkin": "^1",
+        "phpunit/phpunit": "^10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Otel\\Psr22Adapter\\": "src/Otel/Psr22Adapter"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "InstrumentedLibrary\\": "examples/InstrumentedLibrary"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "tbachert/spi": true
+        }
+    }
+}
