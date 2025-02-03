@@ -1,10 +1,11 @@
 <?php
 
-namespace Psr22Adapter\Otel;
+namespace Otel\Psr22Adapter;
 
-use OpenTelemetry\API\Trace\AbstractSpan;
+use OpenTelemetry\API\Trace\Span as OtelSpan;
 use OpenTelemetry\API\Trace\TracerInterface as OtelTracerInterface;
 use OpenTelemetry\API\Trace\TracerProviderInterface;
+use OpenTelemetry\Context\Context;
 use Psr\Tracing\SpanInterface;
 use Psr\Tracing\TracerInterface;
 
@@ -24,11 +25,21 @@ class Tracer implements TracerInterface
      */
     public function createSpan(string $spanName): SpanInterface
     {
-        return new Span($this->tracer->spanBuilder($spanName));
+        return new Span($this->tracer->spanBuilder($spanName), $this->tracer);
     }
 
     public function getCurrentTraceId(): string
     {
-        return AbstractSpan::getCurrent()->getContext()->getTraceId();
+        return OtelSpan::getCurrent()->getContext()->getTraceId();
+    }
+
+    public function getRootSpan(): ?SpanInterface
+    {
+        return Context::getCurrent()->get(Span::rootSpanKey());
+    }
+
+    public function getCurrentSpan(): ?SpanInterface
+    {
+        return Context::getCurrent()->get(Span::contextKey());
     }
 }
